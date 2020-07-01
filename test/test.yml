@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  roles:
+    - ../../ansible-fluentbit
+  vars:
+    fluentbit_service_log_level: "trace"
+    fluentbit_service_log_file: "/tmp/fluentbit.log"
+    fluentbit_inputs:
+      - Name: "tail"
+        Path: "/var/log/syslog"
+        Storage.type: "memory"
+        Mem_Buf_Limit: "20M"
+        Tag: "syslog"
+    fluentbit_outputs:
+      - Name: "stdout"
+        Match: "*"
+    fluentbit_service_storage_path: "/tmp/fluentbit"
+    fluentbit_service_storage_sync: "normal"
+    fluentbit_service_storage_checksum: "off"
+    fluentbit_service_storage_mem_limit: "100M"
