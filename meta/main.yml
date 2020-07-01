@@ -1,11 +1,10 @@
 ---
 galaxy_info:
   role_name: fluentbit
-  author: orachide
-  description: Install Fluentbit as a service
-  company: chidix.fr
-  license: license BSD
-  min_ansible_version: 2.7
+  author: eagleusb
+  description: "Install fluentbit agent"
+  license: "license BSD"
+  min_ansible_version: 2.8
   platforms:
     - name: EL
       versions:
@@ -18,4 +17,5 @@ galaxy_info:
     - fluentd
     - logcollectors
     - logshipper
+
 dependencies: []
