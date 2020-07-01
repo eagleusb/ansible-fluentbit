@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+{% for input in fluentbit_outputs %}
+[OUTPUT]
+{% for key in input %}
+    {{ key }} {{ input[key] }}
+{% endfor %}
+
+{% endfor %}

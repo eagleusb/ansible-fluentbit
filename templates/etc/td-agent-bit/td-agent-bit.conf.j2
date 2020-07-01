@@ -1,0 +1,51 @@
+# {{ ansible_managed }}
+
+[SERVICE]
+    Flush        {{ fluentbit_service_flush_seconds }}
+    Daemon       {{ (fluentbit_service_daemon | bool) | ternary('On', 'Off' ) }}
+
+    # log
+    Log_Level    {{ fluentbit_service_log_level }}
+{% if fluentbit_service_log_file %}
+    Log_File     {{ fluentbit_service_log_file }}
+{% endif %}
+
+    # metrics
+    HTTP_Server  {{ (fluentbit_service_enable_metrics | bool) | ternary('On', 'Off' ) }}
+    HTTP_Listen  {{ fluentbit_service_metrics_listen_ip }}
+    HTTP_Port    {{ fluentbit_service_metrics_listen_port }}
+
+    # backpressure
+{% if fluentbit_service_storage_path %}
+    Storage.path              {{ fluentbit_service_storage_path }}
+{% endif %}
+    Storage.sync              {{ fluentbit_service_storage_sync | default("normal") }}
+    Storage.checksum          {{ fluentbit_service_storage_checksum | default("off") }}
+{% if fluentbit_service_storage_mem_limit %}
+    Storage.backlog.mem_limit {{ fluentbit_service_storage_mem_limit }}
+{% endif %}
+
+    # parsers
+    Parsers_File parsers.conf
+{% for parser in fluentbit_parser_files %}
+    Parsers_File {{ parser }}
+{% endfor %}
+
+{% if fluentbit_plugins | length() > 0 %}
+    # plugins
+    Plugins_File plugins.conf
+{% endif %}
+
+{% if fluentbit_inputs | length() > 0 %}
+# inputs
+@INCLUDE inputs.conf
+{% endif %}
+
+{%- if fluentbit_outputs | length() > 0 %}
+# outputs
+@INCLUDE outputs.conf
+{% endif %}
+
+{%- for conf_file in fluentbit_include_files %}
+@INCLUDE {{ conf_file.name }}
+{% endfor %}

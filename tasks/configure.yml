@@ -1,13 +1,42 @@
 ---
 
-- name: "fluentbit | templatize main configuration"
+- name: "fluentbit | write main configuration"
   template:
-    src: "etc/td-agent-bit.conf.j2"
+    src: "etc/td-agent-bit/td-agent-bit.conf.j2"
     dest: "/etc/td-agent-bit/td-agent-bit.conf"
     mode: 0644
   notify: "enable and start fluentbit service"
 
-- name: "fluentbit | templatize additional configuration"
+- name: "fluentbit | write inputs configuration"
+  template:
+    src: "etc/td-agent-bit/inputs.conf.j2"
+    dest: "/etc/td-agent-bit/inputs.conf"
+    mode: 0644
+  loop: "{{ fluentbit_inputs }}"
+  when: fluentbit_inputs | length() > 0
+  notify: "restart fluentbit service"
+
+- name: "fluentbit | write outputs configuration"
+  template:
+    src: "etc/td-agent-bit/outputs.conf.j2"
+    dest: "/etc/td-agent-bit/outputs.conf"
+    mode: 0644
+  loop: "{{ fluentbit_outputs }}"
+  when: fluentbit_outputs | length() > 0
+  notify: "restart fluentbit service"
+
+- name: "fluentbit | write custom parsers configuration"
+  template:
+    src: "{{ custom_parser.template }}"
+    dest: "/etc/td-agent-bit/{{ custom_parser.name }}"
+    mode: 0644
+  loop: "{{ fluentbit_parsers_file }}"
+  loop_control:
+    loop_var: custom_parser
+  when: fluentbit_parser_files | length() > 0
+  notify: "restart fluentbit service"
+
+- name: "fluentbit | write extra configuration files"
   template:
     src: "{{ extra_config.template }}"
     dest: "/etc/td-agent-bit/{{ extra_config.name }}"
@@ -15,5 +44,5 @@
   loop: "{{ fluentbit_additional_conf_files }}"
   loop_control:
     loop_var: extra_config
-  when: fluentbit_additional_conf_files | length() > 0
+  when: fluentbit_include_files | length() > 0
   notify: "restart fluentbit service"

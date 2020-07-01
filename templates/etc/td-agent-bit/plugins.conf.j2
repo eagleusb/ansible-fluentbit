@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+[PLUGINS]
+{% for plugin in fluentbit_plugins %}
+    Path {{ plugin }}
+{%%}

@@ -10,20 +10,35 @@ fluentbit_repository:
 # descr: common td-agent daemon parameters
 fluentbit_service_flush_seconds: 5
 fluentbit_service_daemon: false
-fluentbit_service_custom_parsers_file: []
 fluentbit_service_log_level: info
+fluentbit_service_log_file: ""
 fluentbit_service_enable_metrics: false
 fluentbit_service_metrics_listen_ip: 0.0.0.0
 fluentbit_service_metrics_listen_port: 2020
+
+# type: string
+# descr: td-agent storage configuration
+fluentbit_service_storage_path: ""
+fluentbit_service_storage_sync: "normal"
+fluentbit_service_storage_checksum: "off"
+fluentbit_service_storage_mem_limit: ""
+
+# type: list
+# descr: list of dict, td-agent parser
+fluentbit_parser_files: []
+
+# type: list
+# descr: list of path to td-agent plugins
+fluentbit_plugins: []
 
 # type: list
 # descr: list of dict, td-agent input section
 fluentbit_inputs: []
 
 # type: list
-# descr: list of dictm td-agent output section
+# descr: list of dict, td-agent output section
 fluentbit_outputs: []
 
 # type: list
 # descr: list of extra td-agent configuration templates
-fluentbit_additional_conf_files: []
+fluentbit_include_files: []
