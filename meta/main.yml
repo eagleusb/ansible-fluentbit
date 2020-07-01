@@ -15,7 +15,10 @@ galaxy_info:
   galaxy_tags:
     - fluentbit
     - fluentd
-    - logcollectors
-    - logshipper
+    - fluent
+    - td
+    - agent
+    - logging
+    - monitoring
 
 dependencies: []
