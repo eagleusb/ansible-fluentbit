@@ -25,12 +25,21 @@
   when: fluentbit_outputs | length() > 0
   notify: "restart fluentbit service"
 
+- name: "fluentbit | write filters configuration"
+  template:
+    src: "etc/td-agent-bit/filters.conf.j2"
+    dest: "/etc/td-agent-bit/filters.conf"
+    mode: 0644
+  loop: "{{ fluentbit_filters }}"
+  when: fluentbit_filters | length() > 0
+  notify: "restart fluentbit service"
+
 - name: "fluentbit | write custom parsers configuration"
   template:
     src: "{{ custom_parser.template }}"
     dest: "/etc/td-agent-bit/{{ custom_parser.name }}"
     mode: 0644
-  loop: "{{ fluentbit_parsers_file }}"
+  loop: "{{ fluentbit_parser_files }}"
   loop_control:
     loop_var: custom_parser
   when: fluentbit_parser_files | length() > 0
@@ -41,7 +50,7 @@
     src: "{{ extra_config.template }}"
     dest: "/etc/td-agent-bit/{{ extra_config.name }}"
     mode: 0644
-  loop: "{{ fluentbit_additional_conf_files }}"
+  loop: "{{ fluentbit_include_files }}"
   loop_control:
     loop_var: extra_config
   when: fluentbit_include_files | length() > 0

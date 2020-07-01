@@ -46,6 +46,11 @@
 @INCLUDE outputs.conf
 {% endif %}
 
+{% if fluentbit_filters | length() > 0 %}
+# filters
+@INCLUDE filters.conf
+{% endif %}
+
 {%- for conf_file in fluentbit_include_files %}
 @INCLUDE {{ conf_file.name }}
 {% endfor %}

@@ -14,6 +14,10 @@
     fluentbit_outputs:
       - Name: "stdout"
         Match: "*"
+    fluentbit_filters:
+      - Name: "record_modifier"
+        Match: "*"
+        Record: "hostname ${HOSTNAME}"
     fluentbit_service_storage_path: "/tmp/fluentbit"
     fluentbit_service_storage_sync: "normal"
     fluentbit_service_storage_checksum: "off"

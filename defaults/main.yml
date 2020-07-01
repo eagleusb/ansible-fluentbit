@@ -32,6 +32,10 @@ fluentbit_parser_files: []
 fluentbit_plugins: []
 
 # type: list
+# descr: list of dict, td-agent filter section
+fluentbit_filters: []
+
+# type: list
 # descr: list of dict, td-agent input section
 fluentbit_inputs: []
 

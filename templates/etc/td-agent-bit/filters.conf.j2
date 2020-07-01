@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+
+{% for filter in fluentbit_filters %}
+[FILTER]
+{% for key in filter %}
+  {{ key }} {{ filter[key] }}
+{% endfor %}
+
+{% endfor %}
