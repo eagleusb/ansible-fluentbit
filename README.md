@@ -1,16 +1,15 @@
 Ansible Role Fluentbit
 =========
 
-[![Build Status](https://travis-ci.org/orachide/ansible-role-fluentbit.svg?branch=master)](https://travis-ci.org/orachide/ansible-role-fluentbit)
-[![Ansible Galaxy](https://img.shields.io/badge/galaxy-orachide-660198.svg)](https://galaxy.ansible.com/orachide)
+[![Ansible Version](https://img.shields.io/badge/ansible-v2.8+-blue.svg)](https://github.com/eagleusb/ansible-fluentbit)
 
-This role installs [Fluentbit](https://fluentbit.io/) as a service on given hosts
+This role installs and configure [fluentbit](https://fluentbit.io/) log collector.
 
 Installation
 ------------
 
 ```sh
-ansible-galaxy install orachide.fluentbit
+ansible-galaxy install eagleusb.fluentbit
 ```
 
 Requirements
@@ -21,13 +20,19 @@ None
 Role Variables
 --------------
 
-| Variables                             | Required | Default value | Description                                                      |
-|---------------------------------------|----------|---------------|------------------------------------------------------------------|
-| fluentbit_service_flush_seconds       | false    | *5*           | Flush interval in seconds                                        |
-| fluentbit_service_metrics_listen_port | false    | *2020*        | Http endpoint (metrics) port                                     |
-| fluentbit_inputs                      | false    | *[]*          | Array of inputs (in JSON format) to add in default conf file     |
-| fluentbit_outputs                     | false    | *[]*          | Array of ouputs (in JSON format) to add in default conf file     |
-| fluentbit_additional_conf_files       | false    | *[]*          | Additional conf files to be installed, could be *Jinja* template |
+| Variables                               | Required | Default value | Description                                            |
+|-----------------------------------------|----------|---------------|--------------------------------------------------------|
+| fluentbit_service_flush_seconds         | no       | *5.0*         | flush input data to output every seconds.nanoseconds   |
+| fluentbit_service_log_file              | no       | ""            | output td-agent daemon logs to this file               |
+| fluentbit_service_enable_metrics        | no       | *false*       | enable metrics http endpoint                           |
+| fluentbit_service_metrics_listen_ip     | no       | "0.0.0.0"     | metrics HTTP endpoint listening addr                   |
+| fluentbit_service_metrics_listen_port   | no       | *2020*        | metrics HTTP endpoint listening port                   |
+| fluentbit_parser_files                  | no       | *[]*          | array of custom parser templates in jinja2             |
+| fluentbit_plugins                       | no       | *[]*          | array of path(s) to your plugins                       |
+| fluentbit_filters                       | no       | *[]*          | array of fluentbit filters(s) in JSON                  |
+| fluentbit_inputs                        | no       | *[]*          | array of fluentbit inputs(s) in JSON                   |
+| fluentbit_outputs                       | no       | *[]*          | array of fluentbit ouputs in JSON                      |
+| fluentbit_include_files                 | no       | *[]*          | array of extra configuration files in jinja2           |
 
 Dependencies
 ------------
@@ -37,24 +42,39 @@ None
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables
-passed in as parameters) is always nice for users too:
-
-```yml
+```yaml
 - hosts: all
   roles:
     - role: ansible-fluentbit
-      fluentbit_service_flush_seconds: 5
-      fluentbit_service_log_level: info
-      fluentbit_service_enable_metrics: true
-      fluentbit_service_metrics_listen_port: 2020
-      fluentbit_inputs:
-        - {"Name": "dummy", "Tag": "dummy.log"}
-      fluentbit_outputs:
-        - {"Name": "stdout", "Match": "*"}
-      fluentbit_additional_conf_files:
-        - name: cpu.conf
-          template: '{{ playbook_dir }}/templates/cpu.conf.j2'
+      vars:
+        fluentbit_service_log_level: "trace"
+        fluentbit_service_log_file: "/tmp/fluentbit.log"
+        fluentbit_service_flush_seconds: 5
+        fluentbit_service_enable_metrics: true
+        fluentbit_service_metrics_listen_port: 2020
+        fluentbit_service_storage_path: "/tmp/fluentbit"
+        fluentbit_service_storage_sync: "normal"
+        fluentbit_service_storage_checksum: "off"
+        fluentbit_service_storage_mem_limit: "100M"
+        fluentbit_inputs:
+          - Name: "tail"
+            Path: "/var/log/syslog"
+            Storage.type: "memory"
+            Mem_Buf_Limit: "20M"
+            Tag: "syslog"
+        fluentbit_outputs:
+          - Name: "stdout"
+            Match: "*"
+        fluentbit_filters:
+          - Name: "record_modifier"
+            Match: "*"
+            Record: "hostname ${HOSTNAME}"
+        fluentbit_parser_files:
+          - name: "myparser.conf"
+            template: "{{ playbook_dir }}/templates/myparser.conf.j2"
+        fluentbit_include_files:
+          - name: "cpu.conf"
+            template: "{{ playbook_dir }}/templates/cpu.conf.j2"
 ```
 
 License
@@ -65,4 +85,4 @@ BSD
 Author Information
 ------------------
 
-This role was originally created in 2019 by [Rachide Ouattara](https://orachide.chidix.fr/).
+Heavily modified, this role was originally created by Rachide Ouattara.
