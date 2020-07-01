@@ -3,7 +3,7 @@
   package:
     name: "apt-transport-https"
     state: present
-    update_cache: yes
+    update_cache: true
     cache_valid_time: 3600
 
 - name: "fluentbit | add fluentbit repository gpg key"
@@ -11,6 +11,7 @@
     url: "{{ fluentbit_repository.gpg }}"
     state: present
 
+# yamllint disable rule:line-length
 - name: "fluentbit | add and enable fluentbit repository"
   apt_repository:
     repo: >-
