@@ -28,7 +28,7 @@
     # parsers
     Parsers_File parsers.conf
 {% for parser in fluentbit_parser_files %}
-    Parsers_File {{ parser }}
+    Parsers_File {{ parser.name }}
 {% endfor %}
 
 {% if fluentbit_plugins | length() > 0 %}
